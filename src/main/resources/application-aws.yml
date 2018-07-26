@@ -6,4 +6,3 @@ server:
   contextPath: /
   port: 8084
   address: 172.31.10.241
-  publicAddress: http://convrt-me-ui.s3-website-us-west-1.amazonaws.com/
