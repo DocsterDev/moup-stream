@@ -6,3 +6,10 @@ server:
   contextPath: /
   port: 8084
   address: 172.31.10.241
+
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+  file: spring-stream.log

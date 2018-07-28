@@ -19,7 +19,7 @@ public class StreamConversionService {
                 "-b:a",
                 "40k",
                 "-ar",
-                "48000", // 48000 24000 16000 12000 8000
+                "24000", // 48000 24000 16000 12000 8000
                 "-compression_level",
                 "10",
                 "-y",

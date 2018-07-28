@@ -1,4 +1,3 @@
-# Default config
 
 spring.profiles: default
 
@@ -8,6 +7,9 @@ server:
   address: localhost
   publicAddress: http://localhost:4200
 
-logging.level.org.springframework.web: INFO
-
-
+logging:
+  level:
+    org:
+      springframework:
+        web: INFO
+  file: spring-stream.log

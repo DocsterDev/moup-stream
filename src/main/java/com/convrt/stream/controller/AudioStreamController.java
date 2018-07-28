@@ -28,11 +28,11 @@ public class AudioStreamController {
             Process p = streamConversionService.convertVideo(url);
             try {
                 IOUtils.copyLarge(p.getInputStream(), outputStream);
+                p.destroyForcibly();
+                IOUtils.closeQuietly(outputStream);
+                log.info("CLOSED OUTPUT STREAM !!!!");
             } catch (Exception e) {
                 throw new RuntimeException("Error streaming video", e);
-            } finally {
-                p.destroy();
-                IOUtils.closeQuietly(outputStream);
             }
             log.info("STREAM CLOSED!!!");
         };
