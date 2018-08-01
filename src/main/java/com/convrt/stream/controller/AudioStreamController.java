@@ -22,17 +22,21 @@ public class AudioStreamController {
     public StreamingResponseBody handleRequest(@RequestParam("u") String u, HttpServletResponse response) {
         response.setContentType("audio/webm");
         response.setHeader("Content-disposition", "inline; filename=output.webm");
+        if (u == null) {
+            throw new RuntimeException("No stream URL provided");
+        }
         byte[] decodedUrl =  Base64.getDecoder().decode(u);
         String url = new String(decodedUrl);
         return (outputStream) ->  {
             Process p = streamConversionService.convertVideo(url);
             try {
                 IOUtils.copyLarge(p.getInputStream(), outputStream);
-                p.destroyForcibly();
-                IOUtils.closeQuietly(outputStream);
-                log.info("CLOSED OUTPUT STREAM !!!!");
             } catch (Exception e) {
                 throw new RuntimeException("Error streaming video", e);
+            } finally {
+                IOUtils.closeQuietly(outputStream);
+                p.destroy();
+                log.info("CLOSED OUTPUT STREAM !!!!");
             }
             log.info("STREAM CLOSED!!!");
         };
