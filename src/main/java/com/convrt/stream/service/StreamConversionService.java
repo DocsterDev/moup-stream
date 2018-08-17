@@ -10,7 +10,7 @@ public class StreamConversionService {
     public Process convertVideo(String url, String agent) {
             ProcessBuilder pb;
 
-            if (!"Chrome".equals(agent)) {
+            if ("Chrome".equals(agent)) {
                 pb = new ProcessBuilder("ffmpeg",
                         "-i", url,
                         "-progress",
