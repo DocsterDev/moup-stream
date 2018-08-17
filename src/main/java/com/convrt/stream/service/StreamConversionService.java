@@ -7,26 +7,48 @@ import org.springframework.stereotype.Service;
 @Service
 public class StreamConversionService {
 
-    public Process convertVideo(String url) {
-        final ProcessBuilder pb
-                = new ProcessBuilder("ffmpeg",
-                "-i", url,
-                "-progress",
-                "progress",
-                "-vn",
-                "-c:a",
-                "libopus",
-                "-b:a",
-                "40k",
-                "-ar",
-                "24000", // 48000 24000 16000 12000 8000
-                "-compression_level",
-                "10",
-                "-y",
-                "-f",
-                "webm",
-                "-"
-        );
+    public Process convertVideo(String url, String agent) {
+            ProcessBuilder pb;
+
+            if (!"Chrome".equals(agent)) {
+                pb = new ProcessBuilder("ffmpeg",
+                        "-i", url,
+                        "-progress",
+                        "progress",
+                        "-vn",
+                        "-c:a",
+                        "libopus",
+                        "-b:a",
+                        "40k",
+                        "-ar",
+                        "24000", // 48000 24000 16000 12000 8000
+                        "-compression_level",
+                        "10",
+                        "-y",
+                        "-f",
+                        "webm",
+                        "-"
+                );
+            } else {
+                pb = new ProcessBuilder("ffmpeg",
+                        "-i", url,
+                        "-progress",
+                        "progress",
+                        "-vn",
+                        "-c:a",
+                        "libmp3lame",
+                        "-b:a",
+                        "40k",
+                        "-ar",
+                        "22050",
+                        "-compression_level",
+                        "10",
+                        "-y",
+                        "-f",
+                        "mp3",
+                        "-"
+                );
+            }
         //pb.redirectErrorStream(true);
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         pb.redirectOutput(ProcessBuilder.Redirect.PIPE);
