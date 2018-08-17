@@ -23,8 +23,8 @@ public class AudioStreamController {
 
     @GetMapping
     public StreamingResponseBody handleRequest(@RequestParam("u") String u, @RequestHeader("User-Agent") String userAgent, HttpServletResponse response) {
-        response.setContentType("audio/webm");
-        response.setHeader("Content-disposition", "inline; filename=output.webm");
+        response.setContentType("audio/mp3");
+        response.setHeader("Content-disposition", "inline; filename=output.mp3");
         Parser parser;
         try {
             parser = new Parser();
