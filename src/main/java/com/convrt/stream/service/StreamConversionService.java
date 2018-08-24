@@ -1,16 +1,21 @@
 package com.convrt.stream.service;
 
+import com.convrt.stream.utils.UserAgentService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class StreamConversionService {
 
-    public Process convertVideo(String url, String agent) {
+    @Autowired
+    private UserAgentService userAgentService;
+
+    public Process convertVideo(String url) {
             ProcessBuilder pb;
 
-            if ("Chrome".equals(agent)) {
+            if (userAgentService.isChrome()) {
                 pb = new ProcessBuilder("ffmpeg",
                         "-i", url,
                         "-progress",
@@ -60,6 +65,11 @@ public class StreamConversionService {
             throw new RuntimeException("Cannot start audio conversion process");
         }
         return p;
+    }
+
+
+    private String getStreamUrl(String videoId){
+        return null;
     }
 
 }

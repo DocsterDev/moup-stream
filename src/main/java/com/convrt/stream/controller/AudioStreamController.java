@@ -1,6 +1,9 @@
 package com.convrt.stream.controller;
 
 import com.convrt.stream.service.StreamConversionService;
+import com.convrt.stream.service.StreamUrlService;
+import com.convrt.stream.utils.UserAgentService;
+import com.convrt.stream.view.Video;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +15,7 @@ import ua_parser.Parser;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -20,25 +24,35 @@ public class AudioStreamController {
 
     @Autowired
     private StreamConversionService streamConversionService;
+    @Autowired
+    private StreamUrlService streamUrlService;
+    @Autowired
+    private UserAgentService userAgentService;
 
     @GetMapping
-    public StreamingResponseBody handleRequest(@RequestParam("u") String u, @RequestHeader("User-Agent") String userAgent, HttpServletResponse response) {
-        response.setContentType("audio/mp3");
-        response.setHeader("Content-disposition", "inline; filename=output.mp3");
-        Parser parser;
-        try {
-            parser = new Parser();
-        } catch (IOException ioException) {
-            throw new RuntimeException(String.format("Cannot read user agent string: %s", userAgent));
+    public StreamingResponseBody handleRequest(@RequestHeader("User-Agent") String userAgent,
+                                               @RequestParam("v") String videoId,
+                                               @RequestParam("title") String title,
+                                               @RequestParam("owner") String owner,
+                                               @RequestParam("duration") String duration,
+                                               HttpServletResponse response) {
+        if (videoId == null) {
+            throw new RuntimeException("No videoId provided");
         }
-        Client c = parser.parse(userAgent);
-        if (u == null) {
-            throw new RuntimeException("No stream URL provided");
-        }
-        byte[] decodedUrl =  Base64.getDecoder().decode(u);
-        String url = new String(decodedUrl);
+        userAgentService.parseUserAgent(userAgent);
+        String fileType = userAgentService.isChrome() ? "webm" : "mp3";
+        response.setContentType(String.format("audio/%s", fileType));
+        response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
+
+        Video video = new Video();
+        video.setId(videoId);
+        video.setTitle(title);
+        video.setOwner(owner);
+        video.setDuration(duration);
+
+        String url = streamUrlService.fetchStreamUrl(video);
         return (outputStream) ->  {
-            Process p = streamConversionService.convertVideo(url, c.userAgent.family);
+            Process p = streamConversionService.convertVideo(url);
             try {
                 IOUtils.copyLarge(p.getInputStream(), outputStream);
             } catch (Exception e) {
