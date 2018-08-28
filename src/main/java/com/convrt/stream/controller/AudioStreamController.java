@@ -32,9 +32,6 @@ public class AudioStreamController {
     @GetMapping
     public StreamingResponseBody handleRequest(@RequestHeader("User-Agent") String userAgent,
                                                @RequestParam("v") String videoId,
-                                               @RequestParam("title") String title,
-                                               @RequestParam("owner") String owner,
-                                               @RequestParam("duration") String duration,
                                                HttpServletResponse response) {
         if (videoId == null) {
             throw new RuntimeException("No videoId provided");
@@ -44,13 +41,7 @@ public class AudioStreamController {
         response.setContentType(String.format("audio/%s", fileType));
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
 
-        Video video = new Video();
-        video.setId(videoId);
-        video.setTitle(title);
-        video.setOwner(owner);
-        video.setDuration(duration);
-
-        String url = streamUrlService.fetchStreamUrl(video);
+        String url = streamUrlService.fetchStreamUrl(videoId);
         return (outputStream) ->  {
             Process p = streamConversionService.convertVideo(url);
             try {
