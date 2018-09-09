@@ -5,7 +5,7 @@ server:
   contextPath: /
   port: 8084
   address: localhost
-  publicAddress: http://localhost:4200
+  apiUrl: http://localhost:8083
 
 logging:
   level:

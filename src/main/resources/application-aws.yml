@@ -6,6 +6,7 @@ server:
   contextPath: /
   port: 8084
   address: 172.31.10.241
+  apiUrl: http://172.31.10.241:8083
 
 logging:
   level:
