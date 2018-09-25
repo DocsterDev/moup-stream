@@ -15,9 +15,9 @@ public class StreamUrlService {
     @Value("${server.apiUrl}")
     private String apiUrl;
 
-    public String fetchStreamUrl(String videoId) {
+    public String fetchStreamUrl(String videoId, String token) {
         RestTemplate restTemplate = new RestTemplate();
-        String url = String.format("%s/api/videos/%s/metadata", apiUrl, videoId);
+        String url = String.format("%s/api/videos/%s/metadata?token=%s", apiUrl, videoId, token);
         Video videoResp = restTemplate.getForObject(url, Video.class);
         log.info("Stream URL returned for video: {}", videoResp.getStreamUrl());
         return Optional.ofNullable(videoResp.getStreamUrl()).orElseThrow(() -> new RuntimeException(String.format("Cannot retrieve stream url for videoId %s", videoId)));
