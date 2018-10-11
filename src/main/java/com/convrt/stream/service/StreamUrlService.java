@@ -1,6 +1,6 @@
 package com.convrt.stream.service;
 
-import com.convrt.stream.view.Video;
+import com.convrt.stream.view.VideoWS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class StreamUrlService {
     public String fetchStreamUrl(String videoId, String token) {
         RestTemplate restTemplate = new RestTemplate();
         String url = String.format("%s/api/videos/%s/metadata?token=%s", apiUrl, videoId, token);
-        Video videoResp = restTemplate.getForObject(url, Video.class);
+        VideoWS videoResp = restTemplate.getForObject(url, VideoWS.class);
         log.info("Stream URL returned for video: {}", videoResp.getStreamUrl());
         return Optional.ofNullable(videoResp.getStreamUrl()).orElseThrow(() -> new RuntimeException(String.format("Cannot retrieve stream url for videoId %s", videoId)));
     }
