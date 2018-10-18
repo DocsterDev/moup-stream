@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.InputStream;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -36,18 +38,18 @@ public class AudioStreamController {
         response.setContentType(String.format("audio/%s", fileType));
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
         String url = streamUrlService.fetchStreamUrl(videoId, token);
-        return (outputStream) ->  {
-            Process p = streamConversionService.convertVideo(url);
-            try {
-                IOUtils.copyLarge(p.getInputStream(), outputStream);
-            } catch (Exception e) {
-                throw new RuntimeException("Error streaming video", e);
+        return (output) ->  {
+            ProcessBuilder pb = streamConversionService.convertVideo(url);
+            Process p = pb.start();
+            try (InputStream input = p.getInputStream(); InputStream es = p.getErrorStream();) {
+                String error = org.apache.commons.io.IOUtils.toString(es, "UTF-8");
+                if (Objects.nonNull(error)) {
+                    log.error("ERROR MESSAGE IN STREAM PROCESS: {}", error);
+                }
+                IOUtils.copy(input, output);
             } finally {
-                IOUtils.closeQuietly(outputStream);
-                p.destroy();
-                log.info("CLOSED OUTPUT STREAM !!!!");
+                log.info("Stream closed for stream playing video id {}", videoId);
             }
-            log.info("STREAM CLOSED!!!");
         };
     }
 }

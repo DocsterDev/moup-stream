@@ -15,7 +15,7 @@ public class StreamConversionService {
     @Autowired
     private UserAgentService userAgentService;
 
-    public Process convertVideo(String url) {
+    public ProcessBuilder convertVideo(String url) {
             ProcessBuilder pb;
             UserSettingsWS userSettings = new UserSettingsWS();
             userSettings.setSampleRate(BigDecimal.valueOf(128));
@@ -29,15 +29,8 @@ public class StreamConversionService {
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
         pb.redirectOutput(ProcessBuilder.Redirect.PIPE);
 
-        Process p;
-        try {
-            p = pb.start();
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot start audio conversion process");
-        }
-        return p;
+        return pb;
     }
-
 
     private ProcessBuilder getAudioEncoderMp3(UserSettingsWS userSettings, String url) {
         return new ProcessBuilder("ffmpeg",
