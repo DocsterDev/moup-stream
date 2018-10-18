@@ -32,7 +32,7 @@ public class AudioStreamController {
             throw new RuntimeException("No videoId provided");
         }
         userAgentService.parseUserAgent(userAgent);
-        String fileType = userAgentService.isChrome() ? "webm" : "ogg";
+        String fileType = userAgentService.isChrome() ? "webm" : "mp3";
         response.setContentType(String.format("audio/%s", fileType));
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
         String url = streamUrlService.fetchStreamUrl(videoId, token);

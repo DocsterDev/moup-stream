@@ -23,7 +23,7 @@ public class StreamConversionService {
             if (userAgentService.isChrome()) {
                 pb = getAudioEncoderWebm(userSettings, url);
             } else {
-                pb = getAudioEncoderOgg(userSettings, url);
+                pb = getAudioEncoderMp3(userSettings, url);
             }
         //pb.redirectErrorStream(true);
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
@@ -61,14 +61,6 @@ public class StreamConversionService {
     }
 
     private ProcessBuilder getAudioEncoderWebm(UserSettingsWS userSettings, String url) {
-        BigDecimal curVal = userSettings.getBitrate();
-//        if (!curVal.equals(BigDecimal.valueOf(8000))
-//                || !curVal.equals(BigDecimal.valueOf(12000))
-//                || !curVal.equals(BigDecimal.valueOf(16000))
-//                || !curVal.equals(BigDecimal.valueOf(24000))
-//                || !curVal.equals(BigDecimal.valueOf(48000))) {
-//            throw new RuntimeException(String.format("Incorrect bitrate for webm chosen: %s", curVal));
-//        }
         return new ProcessBuilder("ffmpeg",
                 "-i", url,
                 "-progress",
