@@ -32,18 +32,35 @@ public class StreamConversionService {
         return pb;
     }
 
+    private ProcessBuilder getAudioEncoderM4a(UserSettingsWS userSettings, String url) {
+        return new ProcessBuilder("ffmpeg",
+                "-i", url,
+                "-vn",
+                "-c:a",
+                "aac",
+//                "-b:a",
+//                String.format("%sk", userSettings.getSampleRate()),
+//                "-ar",
+//                userSettings.getBitrate().toString(),
+                "-compression_level",
+                "10",
+                "-y",
+                "-f",
+                "m4a",
+                "-"
+        );
+    }
+
     private ProcessBuilder getAudioEncoderMp3(UserSettingsWS userSettings, String url) {
         return new ProcessBuilder("ffmpeg",
                 "-i", url,
-                "-progress",
-                "progress",
                 "-vn",
                 "-c:a",
                 "libmp3lame",
-                "-b:a",
-                String.format("%sk", userSettings.getSampleRate()),
-                "-ar",
-                userSettings.getBitrate().toString(),
+//                "-b:a",
+//                String.format("%sk", userSettings.getSampleRate()),
+//                "-ar",
+//                userSettings.getBitrate().toString(),
                 "-compression_level",
                 "10",
                 "-y",
@@ -56,15 +73,13 @@ public class StreamConversionService {
     private ProcessBuilder getAudioEncoderWebm(UserSettingsWS userSettings, String url) {
         return new ProcessBuilder("ffmpeg",
                 "-i", url,
-                "-progress",
-                "progress",
                 "-vn",
                 "-c:a",
                 "libopus",
-                "-b:a",
-                String.format("%sk", userSettings.getSampleRate()),
-                "-ar",
-                userSettings.getBitrate().toPlainString(), // 48000 24000 16000 12000 8000
+//                "-b:a",
+//                String.format("%sk", userSettings.getSampleRate()),
+//                "-ar",
+//                userSettings.getBitrate().toPlainString(), // 48000 24000 16000 12000 8000
                 "-compression_level",
                 "10",
                 "-y",
@@ -77,8 +92,6 @@ public class StreamConversionService {
     private ProcessBuilder getAudioEncoderOgg(UserSettingsWS userSettings, String url) {
         return new ProcessBuilder("ffmpeg",
                 "-i", url,
-                "-progress",
-                "progress",
                 "-vn",
                 "-acodec",
                 "libvorbis",
