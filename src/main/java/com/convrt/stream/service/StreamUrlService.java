@@ -15,12 +15,12 @@ public class StreamUrlService {
     @Value("${server.apiUrl}")
     private String apiUrl;
 
-    public String fetchStreamUrl(String videoId, String token) {
+    public VideoWS fetchStreamUrl(String videoId, String token) {
         RestTemplate restTemplate = new RestTemplate();
         String url = String.format("%s/api/videos/%s/metadata?token=%s", apiUrl, videoId, token);
         VideoWS videoResp = restTemplate.getForObject(url, VideoWS.class);
         log.info("Stream URL returned for video: {}", videoResp.getStreamUrl());
-        return Optional.ofNullable(videoResp.getStreamUrl()).orElseThrow(() -> new RuntimeException(String.format("Cannot retrieve stream url for videoId %s", videoId)));
+        return Optional.ofNullable(videoResp).orElseThrow(() -> new RuntimeException(String.format("Cannot retrieve stream url for videoId %s", videoId)));
     }
 
 }

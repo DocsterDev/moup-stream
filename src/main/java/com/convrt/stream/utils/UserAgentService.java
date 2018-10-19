@@ -23,6 +23,10 @@ public class UserAgentService {
         c = parser.parse(userAgent);
     }
 
+    public String getBrowserFamily() {
+        return (c != null) ? c.userAgent.family : "Unknown Browser";
+    }
+
     public boolean isChrome() {
         if (c != null && c.userAgent.family.contains("Chrome")) {
             return true;
