@@ -49,7 +49,11 @@ public class AudioStreamController {
                     if (Objects.nonNull(error)) {
                         log.error("ERROR MESSAGE IN STREAM PROCESS: {}", error);
                     }
-                    IOUtils.copy(input, output);
+                    try {
+                        IOUtils.copy(input, output);
+                    } catch (Exception e) {
+                        log.error("IO EXCEPTION: {}", e.getMessage());
+                    }
                 } finally {
                     log.info("Stream closed for stream playing video id {}", videoId);
                 }
