@@ -41,7 +41,6 @@ public class AudioStreamController {
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
         VideoWS videoWS = streamUrlService.fetchStreamUrl(videoId, token);
         return (output) ->  {
-           // if (!videoWS.isAudioOnly() || !userAgentService.isChrome()) {
                 log.info("Streaming url through ffmpeg for browser {}", userAgentService.getBrowserFamily());
                 Process p = streamConversionService.convertVideo(videoWS.getStreamUrl()).start();
                 try (InputStream input = p.getInputStream(); InputStream es = p.getErrorStream();) {
@@ -57,15 +56,6 @@ public class AudioStreamController {
                 } finally {
                     log.info("Stream closed for stream playing video id {}", videoId);
                 }
-//            } else {
-//                log.info("Streaming origin stream url for browser {}", userAgentService.getBrowserFamily());
-//                URL url = new URL(videoWS.getStreamUrl());
-//                try (InputStream input = url.openStream()) {
-//                    IOUtils.copy(input, output);
-//                } finally {
-//                    log.info("Stream closed for stream playing video id {}", videoId);
-//                }
-//            }
         };
     }
 }
