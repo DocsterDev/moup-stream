@@ -3,7 +3,7 @@ package com.convrt.stream.controller;
 import com.convrt.stream.service.StreamConversionService;
 import com.convrt.stream.service.StreamUrlService;
 import com.convrt.stream.utils.UserAgentService;
-import com.convrt.stream.view.VideoWS;
+import com.convrt.stream.view.StreamWS;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
-import java.net.URL;
+import java.util.Base64;
 import java.util.Objects;
 
 @Slf4j
@@ -39,23 +39,55 @@ public class AudioStreamController {
         String fileType = userAgentService.isChrome() ? "webm" : "mp3";
         response.setContentType(String.format("audio/%s", fileType));
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
-        VideoWS videoWS = streamUrlService.fetchStreamUrl(videoId, token);
+        StreamWS streamWS = streamUrlService.fetchStreamUrl(videoId, token);
         return (output) ->  {
                 log.info("Streaming url through ffmpeg for browser {}", userAgentService.getBrowserFamily());
-                Process p = streamConversionService.convertVideo(videoWS.getStreamUrl()).start();
+                Process p = streamConversionService.convertVideo(streamWS.getStreamUrl()).start();
                 try (InputStream input = p.getInputStream(); InputStream es = p.getErrorStream();) {
                     String error = org.apache.commons.io.IOUtils.toString(es, "UTF-8");
                     if (Objects.nonNull(error)) {
                         log.error("ERROR MESSAGE IN STREAM PROCESS: {}", error);
                     }
                     try {
-                        IOUtils.copy(input, output);
+                        IOUtils.copyLarge(input, output);
                     } catch (Exception e) {
                         log.error("IO EXCEPTION: {}", e.getMessage());
                     }
                 } finally {
                     log.info("Stream closed for stream playing video id {}", videoId);
                 }
+        };
+    }
+
+    @GetMapping("/compress")
+    public StreamingResponseBody handleRequest(@RequestHeader("User-Agent") String userAgent,
+                                               @RequestParam("url") String streamUrl,
+                                               HttpServletResponse response) {
+        if (streamUrl == null) {
+            throw new RuntimeException("Cannot stream: Stream URL is null.");
+        }
+        byte[] decodedBytes = Base64.getDecoder().decode(streamUrl);
+        String decodedString = new String(decodedBytes);
+        userAgentService.parseUserAgent(userAgent);
+        String fileType = userAgentService.isChrome() ? "webm" : "mp3";
+        response.setContentType(String.format("audio/%s", fileType));
+        response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
+        return (output) ->  {
+            log.info("Streaming url through ffmpeg for browser {}", userAgentService.getBrowserFamily());
+            Process p = streamConversionService.convertVideo(decodedString).start();
+            try (InputStream input = p.getInputStream(); InputStream es = p.getErrorStream();) {
+                String error = org.apache.commons.io.IOUtils.toString(es, "UTF-8");
+                if (Objects.nonNull(error)) {
+                    log.error("ERROR MESSAGE IN STREAM PROCESS: {}", error);
+                }
+                try {
+                    IOUtils.copyLarge(input, output);
+                } catch (Exception e) {
+                    log.error("IO EXCEPTION: {}", e.getMessage());
+                }
+            } finally {
+                log.info("Stream closed for stream playing");
+            }
         };
     }
 }
