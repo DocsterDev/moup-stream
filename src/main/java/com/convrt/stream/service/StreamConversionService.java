@@ -32,25 +32,6 @@ public class StreamConversionService {
         return pb;
     }
 
-    private ProcessBuilder getAudioEncoderM4a(UserSettingsWS userSettings, String url) {
-        return new ProcessBuilder("ffmpeg",
-                "-i", url,
-                "-vn",
-                "-c:a",
-                "aac",
-//                "-b:a",
-//                String.format("%sk", userSettings.getSampleRate()),
-//                "-ar",
-//                userSettings.getBitrate().toString(),
-                "-compression_level",
-                "10",
-                "-y",
-                "-f",
-                "m4a",
-                "-"
-        );
-    }
-
     private ProcessBuilder getAudioEncoderMp3(UserSettingsWS userSettings, String url) {
         return new ProcessBuilder("ffmpeg",
                 "-i", url,
@@ -88,28 +69,6 @@ public class StreamConversionService {
                 "-"
         );
     }
-
-    private ProcessBuilder getAudioEncoderOgg(UserSettingsWS userSettings, String url) {
-        return new ProcessBuilder("ffmpeg",
-                "-i", url,
-                "-vn",
-                "-acodec",
-                "libvorbis",
-                "-ab",
-                String.format("%sk", userSettings.getSampleRate()),
-                "-ar",
-                userSettings.getBitrate().toPlainString(),
-                "-ac",
-                "2",
-                "-compression_level",
-                "10",
-                "-y",
-                "-f",
-                "ogg",
-                "-"
-        );
-    }
-
 
     private String getStreamUrl(String videoId){
         return null;
