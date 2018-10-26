@@ -39,7 +39,7 @@ public class AudioStreamController {
         String fileType = userAgentService.isChrome() ? "webm" : "mp3";
         response.setContentType(String.format("audio/%s", fileType));
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
-        StreamWS streamWS = streamUrlService.fetchStreamUrl(videoId, token);
+        StreamWS streamWS = streamUrlService.fetchStreamUrl(videoId);
         return (output) ->  {
                 log.info("Streaming url through ffmpeg for browser {}", userAgentService.getBrowserFamily());
                 Process p = streamConversionService.convertVideo(streamWS.getStreamUrl()).start();
