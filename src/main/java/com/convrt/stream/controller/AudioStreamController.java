@@ -54,6 +54,7 @@ public class AudioStreamController {
                         log.error("IO EXCEPTION: {}", e.getMessage());
                     }
                 } finally {
+                    IOUtils.closeQuietly(output);
                     log.info("Stream closed for stream playing video id {}", videoId);
                 }
         };
@@ -86,6 +87,7 @@ public class AudioStreamController {
                     log.error("IO EXCEPTION: {}", e.getMessage());
                 }
             } finally {
+                IOUtils.closeQuietly(output);
                 log.info("Stream closed for stream playing");
             }
         };
