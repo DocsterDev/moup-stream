@@ -1,6 +1,7 @@
 package com.convrt.stream.service;
 
 import com.convrt.stream.utils.UserAgentService;
+import com.convrt.stream.view.StreamWS;
 import com.convrt.stream.view.UserSettingsWS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,16 +16,15 @@ public class StreamConversionService {
     @Autowired
     private UserAgentService userAgentService;
 
-    public ProcessBuilder convertVideo(String url) {
+    public ProcessBuilder convertVideo(StreamWS streamWS) {
             ProcessBuilder pb;
             UserSettingsWS userSettings = new UserSettingsWS();
             userSettings.setSampleRate(BigDecimal.valueOf(128));
             userSettings.setBitrate(BigDecimal.valueOf(48000));
             if (userAgentService.isChrome()) {
-                pb = getAudioEncoderWebm(userSettings, url);
+                pb = getAudioEncoderWebm(userSettings, streamWS);
             } else {
-                log.info("Converting to MP4");
-                pb = getAudioEncoderMp3(userSettings, url);
+                pb = getAudioEncoderMp3(userSettings, streamWS);
             }
         //pb.redirectErrorStream(true);
         pb.redirectError(ProcessBuilder.Redirect.INHERIT);
@@ -33,9 +33,11 @@ public class StreamConversionService {
         return pb;
     }
 
-    private ProcessBuilder getAudioEncoderMp3(UserSettingsWS userSettings, String url) {
+    private ProcessBuilder getAudioEncoderMp3(UserSettingsWS userSettings, StreamWS streamWS) {
         return new ProcessBuilder("ffmpeg",
-                "-i", url,
+                //"-re",
+                "-i",
+                streamWS.getStreamUrl(),
                 "-vn",
                 "-c:a",
                 "libmp3lame",
@@ -43,8 +45,6 @@ public class StreamConversionService {
 //                String.format("%sk", userSettings.getSampleRate()),
 //                "-ar",
 //                userSettings.getBitrate().toString(),
-                "-compression_level",
-                "10",
                 "-y",
                 "-f",
                 "mp3",
@@ -52,9 +52,11 @@ public class StreamConversionService {
         );
     }
 
-    private ProcessBuilder getAudioEncoderWebm(UserSettingsWS userSettings, String url) {
+    private ProcessBuilder getAudioEncoderWebm(UserSettingsWS userSettings, StreamWS streamWS) {
         return new ProcessBuilder("ffmpeg",
-                "-i", url,
+                //"-re",
+                "-i",
+                streamWS.getStreamUrl(),
                 "-vn",
                 "-c:a",
                 "libopus",
@@ -70,9 +72,4 @@ public class StreamConversionService {
                 "-"
         );
     }
-
-    private String getStreamUrl(String videoId){
-        return null;
-    }
-
 }

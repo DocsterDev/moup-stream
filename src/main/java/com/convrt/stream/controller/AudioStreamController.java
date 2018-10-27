@@ -34,14 +34,18 @@ public class AudioStreamController {
         if (videoId == null) {
             throw new RuntimeException("No videoId provided");
         }
+        log.info("User Agent: {}", userAgent);
         userAgentService.parseUserAgent(userAgent);
         String fileType = userAgentService.isChrome() ? "webm" : "mp3";
         response.setContentType(String.format("audio/%s", fileType));
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
         StreamWS streamWS = streamUrlService.fetchStreamUrl(videoId, userAgent);
+        if (!streamWS.isSuccess()) {
+            throw new RuntimeException(String.format("Failed to fetch valid stream URL to stream video id %s", videoId));
+        }
         return (output) ->  {
                 log.info("Streaming url through ffmpeg for browser {}", userAgentService.getBrowserFamily());
-                Process p = streamConversionService.convertVideo(streamWS.getStreamUrl()).start();
+                Process p = streamConversionService.convertVideo(streamWS).start();
                 try (InputStream input = p.getInputStream(); InputStream es = p.getErrorStream();) {
                     String error = org.apache.commons.io.IOUtils.toString(es, "UTF-8");
                     if (Objects.nonNull(error)) {
@@ -74,7 +78,8 @@ public class AudioStreamController {
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
         return (output) ->  {
             log.info("Streaming url through ffmpeg for browser {}", userAgentService.getBrowserFamily());
-            Process p = streamConversionService.convertVideo(decodedString).start();
+            StreamWS streamWS = new StreamWS(decodedString, userAgentService.isChrome() ? "webm" : "m4a");
+            Process p = streamConversionService.convertVideo(streamWS).start();
             try (InputStream input = p.getInputStream(); InputStream es = p.getErrorStream();) {
                 String error = org.apache.commons.io.IOUtils.toString(es, "UTF-8");
                 if (Objects.nonNull(error)) {
