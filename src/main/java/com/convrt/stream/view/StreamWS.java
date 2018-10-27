@@ -16,6 +16,7 @@ public class StreamWS {
     private String streamUrl;
     private String source;
     private boolean audioOnly;
+    private boolean matchesExtension;
     private boolean success;
 
     public StreamWS(boolean success) {

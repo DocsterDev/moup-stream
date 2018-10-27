@@ -23,6 +23,7 @@ public class StreamConversionService {
             if (userAgentService.isChrome()) {
                 pb = getAudioEncoderWebm(userSettings, url);
             } else {
+                log.info("Converting to MP4");
                 pb = getAudioEncoderMp3(userSettings, url);
             }
         //pb.redirectErrorStream(true);
@@ -38,10 +39,10 @@ public class StreamConversionService {
                 "-vn",
                 "-c:a",
                 "libmp3lame",
-                "-b:a",
-                String.format("%sk", userSettings.getSampleRate()),
-                "-ar",
-                userSettings.getBitrate().toString(),
+//                "-b:a",
+//                String.format("%sk", userSettings.getSampleRate()),
+//                "-ar",
+//                userSettings.getBitrate().toString(),
                 "-compression_level",
                 "10",
                 "-y",
@@ -57,10 +58,10 @@ public class StreamConversionService {
                 "-vn",
                 "-c:a",
                 "libopus",
-                "-b:a",
-                String.format("%sk", userSettings.getSampleRate()),
-                "-ar",
-                userSettings.getBitrate().toPlainString(), // 48000 24000 16000 12000 8000
+//                "-b:a",
+//                String.format("%sk", userSettings.getSampleRate()),
+//                "-ar",
+//                userSettings.getBitrate().toPlainString(), // 48000 24000 16000 12000 8000
                 "-compression_level",
                 "10",
                 "-y",
