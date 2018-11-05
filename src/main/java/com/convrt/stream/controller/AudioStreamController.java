@@ -73,7 +73,7 @@ public class AudioStreamController {
         byte[] decodedBytes = Base64.getDecoder().decode(streamUrl);
         String decodedString = new String(decodedBytes);
         userAgentService.parseUserAgent(userAgent);
-        String fileType = userAgentService.isChrome() ? "webm" : "mp3";
+        String fileType = !userAgentService.isChrome() ? "webm" : "mp3";
         response.setContentType(String.format("audio/%s", fileType));
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
         return (output) ->  {
