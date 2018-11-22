@@ -28,21 +28,15 @@ public class AudioStreamController {
     private UserAgentService userAgentService;
 
     @GetMapping("/videos/{videoId}")
-    public StreamingResponseBody handleStreamRequest(@RequestHeader("User-Agent") String userAgent,
-                                               @PathVariable("videoId") String videoId,
-                                               HttpServletResponse response) {
+    public StreamingResponseBody handleStreamRequest(@RequestHeader("User-Agent") String userAgent, @PathVariable("videoId") String videoId, HttpServletResponse response) {
         if (videoId == null) {
             throw new RuntimeException("No videoId provided");
         }
-        log.info("User Agent: {}", userAgent);
         userAgentService.parseUserAgent(userAgent);
         String fileType = userAgentService.isChrome() ? "webm" : "mp3";
         response.setContentType(String.format("audio/%s", fileType));
         response.setHeader("Content-disposition", String.format("inline; filename=output.%s", fileType));
         StreamWS streamWS = streamUrlService.fetchStreamUrl(videoId, userAgent);
-        if (!streamWS.isSuccess()) {
-            throw new RuntimeException(String.format("Failed to fetch valid stream URL to stream video id %s", videoId));
-        }
         return (output) ->  {
                 log.info("Streaming url through ffmpeg for browser {}", userAgentService.getBrowserFamily());
                 Process p = streamConversionService.convertVideo(streamWS).start();
@@ -64,9 +58,7 @@ public class AudioStreamController {
     }
 
     @GetMapping("/{streamUrl}")
-    public StreamingResponseBody handleStreamUrlRequest(@RequestHeader("User-Agent") String userAgent,
-                                               @PathVariable("streamUrl") String streamUrl,
-                                               HttpServletResponse response) {
+    public StreamingResponseBody handleStreamUrlRequest(@RequestHeader("User-Agent") String userAgent, @PathVariable("streamUrl") String streamUrl, HttpServletResponse response) {
         if (streamUrl == null) {
             throw new RuntimeException("Cannot stream: Stream URL is null.");
         }

@@ -20,15 +20,17 @@ public class StreamUrlService {
     public StreamWS fetchStreamUrl(String videoId, String userAgent) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
+        // TODO - Overriding to simulate a Chrome browser to get a webm format if available
+        userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.102 Safari/53";
         headers.add("User-Agent", userAgent);
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         String url = String.format("%s/api/videos/%s/stream", apiUrl, videoId);
         ResponseEntity<StreamWS> streamWS = restTemplate.exchange(url, HttpMethod.GET, entity, StreamWS.class);
         StreamWS streamInfo = streamWS.getBody();
-        log.info("Stream URL returned for video: {}", streamInfo.getStreamUrl());
-        if (streamInfo == null || !streamInfo.isSuccess() || streamInfo.getStreamUrl() == null) {
+        if (streamWS == null || streamInfo == null || streamInfo.getRecommendedFormat() == null) {
             throw new RuntimeException(String.format("Error fetching URL for video id %s", videoId));
         }
+        log.info("Stream URL returned for video: {}", streamInfo.getRecommendedFormat().getUrl());
         return streamInfo;
     }
 
