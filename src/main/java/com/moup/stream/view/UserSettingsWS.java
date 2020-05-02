@@ -1,4 +1,4 @@
-package com.convrt.stream.view;
+package com.moup.stream.view;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

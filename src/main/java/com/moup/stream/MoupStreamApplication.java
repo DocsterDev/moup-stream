@@ -1,16 +1,15 @@
-package com.convrt.stream;
+package com.moup.stream;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @EnableAsync
 @SpringBootApplication
-public class ConvrtStreamApplication {
+public class MoupStreamApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ConvrtStreamApplication.class, args);
+        SpringApplication.run(MoupStreamApplication.class, args);
     }
 
 }

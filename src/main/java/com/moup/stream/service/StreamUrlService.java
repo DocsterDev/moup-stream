@@ -1,14 +1,11 @@
-package com.convrt.stream.service;
+package com.moup.stream.service;
 
-import com.convrt.stream.view.StreamWS;
+import com.moup.stream.view.StreamWS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
-import java.util.Optional;
 
 @Slf4j
 @Service

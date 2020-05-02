@@ -1,9 +1,9 @@
-package com.convrt.stream.controller;
+package com.moup.stream.controller;
 
-import com.convrt.stream.service.StreamConversionService;
-import com.convrt.stream.service.StreamUrlService;
-import com.convrt.stream.utils.UserAgentService;
-import com.convrt.stream.view.StreamWS;
+import com.moup.stream.service.StreamConversionService;
+import com.moup.stream.service.StreamUrlService;
+import com.moup.stream.utils.UserAgentService;
+import com.moup.stream.view.StreamWS;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;

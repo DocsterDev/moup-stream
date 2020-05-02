@@ -1,8 +1,8 @@
-package com.convrt.stream.service;
+package com.moup.stream.service;
 
-import com.convrt.stream.utils.UserAgentService;
-import com.convrt.stream.view.StreamWS;
-import com.convrt.stream.view.UserSettingsWS;
+import com.moup.stream.utils.UserAgentService;
+import com.moup.stream.view.StreamWS;
+import com.moup.stream.view.UserSettingsWS;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
